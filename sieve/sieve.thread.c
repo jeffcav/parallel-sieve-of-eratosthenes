@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#define MAX_PRIMOS 1000000
+#define MAX_PRIMOS 100000000
 #define true 1
 #define false 0
 
@@ -18,7 +18,7 @@ int crivo(int n)
 	max = (int)sqrt((double)n);
 	for (i=2; i < max; i++) {
 		if (primos[i] == true) {
-#pragma omp parallel for
+			#pragma omp parallel for
 			for (j = i * i; j < n; j += i) {
 				primos[j] = false;
 			}
@@ -31,6 +31,7 @@ int crivo(int n)
 int main(int argc, char *argv[])
 {
 	int i, cycles = 1;
+	int nprimes = 0;
 	
 	switch (argc) {
 		case 3:
@@ -51,20 +52,20 @@ int main(int argc, char *argv[])
 	
 	
 	do{
-#pragma omp parallel for
+		#pragma omp parallel for
 		for(i=0; i < max; i++){
 			primos[i] = true;
 		}
 		
 		crivo(max);
 		
-		/*
-		for(i=2; i < max; i++){
+		for (i = 2; i < max; i++) {
 			if (primos[i] == true)
-				printf("%d ", i);
+				nprimes++;
 		}
-		printf("\n");
-		*/
+		
+		printf("Number of primes: %d\n", nprimes);
+		
 	} while (cycles-- > 1);
 	
 	free(primos);

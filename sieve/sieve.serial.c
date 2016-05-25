@@ -29,7 +29,7 @@ int crivo(int n)
 
 int main(int argc, char *argv[])
 {
-	int i, cycles = 1;
+	int i, cycles = 1, nprimes = 0;
 	
 	switch (argc) {
 		case 3:
@@ -50,19 +50,18 @@ int main(int argc, char *argv[])
 	
 	
 	do{
-		for(i=0; i < max; i++){
+		for (i = 0; i < max; i++)
 			primos[i] = true;
-		}
 		
 		crivo(max);
 		
-		/*
-		for(i=2; i < max; i++){
+		for (i = 2; i < max; i++){
 			if (primos[i] == true)
-				printf("%d ", i);
+				nprimes++;
 		}
-		printf("\n");
-		*/
+		
+		printf("Number of primes: %d\n", nprimes);
+		
 	} while (cycles-- > 1);
 	
 	free(primos);
