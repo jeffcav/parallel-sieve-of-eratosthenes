@@ -39,21 +39,25 @@ int main(int argc, char *argv[])
 	low = sqrtn + (rank * slice) + 1;
 	high = low + slice - 1;
 	
-	if (rank == (nprocs - 1))
+	if (rank == (nprocs - 1) || rank == 0) {
 		high += rem;
+	}
 	
 	primes1 = (char*) malloc((sqrtn + 1) * sizeof(char));
 	if (primes1 == NULL)
 		exit(1);
 	
-	if (rank == -1) {
-		primes2 = (char*) malloc((high + rem - low + 1) * sizeof(char));
-	} else {
-		primes2 = (char*) malloc((high - low + 1) * sizeof(char));
-	}
+	primes2 = (char*) malloc((high - low + 1) * sizeof(char));
 	if (primes2 == NULL)
 		exit(1);
 	
+	/* High is higher than it should be for rank=0, fixing it now.
+	 * Reason: making sure we have enough space in *primes2* to receive 
+	 * data from any other process.
+	 */
+	if (rank == 0) {
+		high -= rem;
+	}
 	
 	for (c = 0; c <= sqrtn; c++) {
 		primes1[c] = true;
@@ -64,6 +68,9 @@ int main(int argc, char *argv[])
 	}
 	
 	for (c = 2; c <= sqrtn; c++) {
+		if (primes1[c] == false)
+			continue;
+		
 		for (m = c + 1; m <= sqrtn; m++) {
 			if (m % c == 0)
 				primes1[m] = false;
